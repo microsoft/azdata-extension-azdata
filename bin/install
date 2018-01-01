@@ -58,10 +58,10 @@ function vscodeDtsToTypescript(contents) {
 }
 
 function getURLMatchingEngine(engine, callback) {
-    if (engine === '*') {
+    if (true) {
         // master
         return callback(null, {
-            url: 'https://raw.githubusercontent.com/Microsoft/vscode/master/src/vs/vscode.d.ts',
+            url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/master/src/sql/data.d.ts',
             version: '*'
         });
     }

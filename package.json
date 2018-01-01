@@ -1,14 +1,14 @@
 {
-  "name": "vscode",
+  "name": "sqlops",
   "version": "1.1.10",
-  "typings": "vscode.d.ts",
+  "typings": "sqlops.d.ts",
   "scripts": {
     "prepublish": "tsc -p ./",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./"
   },
   "bin": {
-    "vscode-install": "./bin/install"
+    "sqlops-install": "./bin/install"
   },
   "dependencies": {
     "glob": "^7.1.2",

@@ -61,7 +61,7 @@ function getURLMatchingEngine(engine, callback) {
     if (true) {
         // master
         return callback(null, {
-            url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/refact/idea/src/sql/data.d.ts',
+            url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/refact/idea/src/sql/sqlops.d.ts',
             version: '*'
         });
     }

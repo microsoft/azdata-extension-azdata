@@ -9,7 +9,7 @@ process.on('uncaughtException', function (err) {
     exitWithError(err);
 });
 
-var engine = process.env.npm_package_engines_vscode;
+var engine = process.env.npm_package_engines_sqlops;
 if (!engine) {
     exitWithError('Missing VSCode engine declaration in package.json.');
 }
@@ -58,10 +58,15 @@ function vscodeDtsToTypescript(contents) {
 }
 
 function getURLMatchingEngine(engine, callback) {
-    if (true) {
+    if (!engine || engine === '*') {
         // master
         return callback(null, {
             url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/master/src/sql/sqlops.d.ts',
+            version: '*'
+        });
+    } else {
+        return callback(null, {
+            url: `https://raw.githubusercontent.com/Microsoft/sqlopsstudio/${engine}/src/sql/sqlops.d.ts`,
             version: '*'
         });
     }

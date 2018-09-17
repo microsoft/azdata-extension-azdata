@@ -11,15 +11,15 @@ process.on('uncaughtException', function (err) {
 
 var engine = process.env.npm_package_engines_sqlops;
 if (!engine) {
-    exitWithError('Missing VSCode engine declaration in package.json.');
+    exitWithError('Missing SQL Ops engine declaration in package.json.');
 }
 
-var vscodeDtsTypescriptPath = path.join(path.dirname(__dirname), 'sqlops.d.ts');
+var sqlopsDtsTypescriptPath = path.join(path.dirname(__dirname), 'sqlops.d.ts');
 
-console.log('Detected VS Code engine version: ' + engine);
+console.log('Detected SQL Ops engine version: ' + engine);
 
 getURLMatchingEngine(engine, function (_, data) {
-    console.log('Fetching vscode.d.ts from: ' + data.url);
+    console.log('Fetching sqlops.d.ts from: ' + data.url);
 
     shared.getContents(data.url, process.env.GITHUB_TOKEN, null, function (error, contents) {
         if (error) {
@@ -27,21 +27,21 @@ getURLMatchingEngine(engine, function (_, data) {
         }
 
         if (contents === 'Not Found') {
-            exitWithError(new Error('Could not find vscode.d.ts at the provided URL. Please report this to https://github.com/Microsoft/vscode/issues'));
+            exitWithError(new Error('Could not find sqlops.d.ts at the provided URL. Please report this to https://github.com/Microsoft/sqlops/issues'));
         }
 
         if (data.version !== '*' && semver.lt(data.version, '1.7.0')) {
             // Older versions of vscode.d.ts need a massage to play nice.
-            contents = vscodeDtsToTypescript(contents);
+            contents = sqlopsDtsToTypescript(contents);
         }
 
-        fs.writeFileSync(vscodeDtsTypescriptPath, contents);
+        fs.writeFileSync(sqlopsDtsTypescriptPath, contents);
 
-        console.log('vscode.d.ts successfully installed!\n');
+        console.log('sqlops.d.ts successfully installed!\n');
     });
 });
 
-function vscodeDtsToTypescript(contents) {
+function sqlopsDtsToTypescript(contents) {
     var markerHit = false;
     var lines = contents.split('\n').filter(function (line) {
         if (!markerHit && (line === '// when used for JS*' || line === 'declare module \'sqlops\' {')) {
@@ -70,7 +70,7 @@ function getURLMatchingEngine(engine, callback) {
             version: '*'
         });
     }
-
+    /*
     shared.getContents('https://vscode-update.azurewebsites.net/api/releases/stable', null, { "X-API-Version": "2" }, function (error, tagsRaw) {
         if (error) {
             exitWithError(error);
@@ -120,6 +120,7 @@ function getURLMatchingEngine(engine, callback) {
             version: tag
         });
     });
+    */
 }
 
 function minSatisfying(versions, range) {
@@ -135,6 +136,6 @@ function minSatisfying(versions, range) {
 }
 
 function exitWithError(error) {
-    console.error('Error installing vscode.d.ts: ' + error.toString());
+    console.error('Error installing sqlops.d.ts: ' + error.toString());
     process.exit(1);
 }

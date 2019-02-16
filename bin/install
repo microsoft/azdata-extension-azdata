@@ -30,32 +30,13 @@ getURLMatchingEngine(engine, function (_, data) {
             exitWithError(new Error('Could not find sqlops.d.ts at the provided URL. Please report this to https://github.com/Microsoft/sqlops/issues'));
         }
 
-        if (data.version !== '*' && semver.lt(data.version, '1.7.0')) {
-            // Older versions of vscode.d.ts need a massage to play nice.
-            contents = sqlopsDtsToTypescript(contents);
-        }
+        // we don't need massaging in any version of our .d.ts
 
         fs.writeFileSync(sqlopsDtsTypescriptPath, contents);
 
         console.log('sqlops.d.ts successfully installed!\n');
     });
 });
-
-function sqlopsDtsToTypescript(contents) {
-    var markerHit = false;
-    var lines = contents.split('\n').filter(function (line) {
-        if (!markerHit && (line === '// when used for JS*' || line === 'declare module \'sqlops\' {')) {
-            markerHit = true;
-        }
-
-        return !markerHit;
-    });
-
-    lines.unshift('/// <reference path="./thenable.d.ts" />');
-    lines.push('export = sqlops;'); // this is to enable TS module resolution support
-
-    return lines.join('\n');
-}
 
 function getURLMatchingEngine(engine, callback) {
     if (!engine || engine === '*') {
@@ -64,14 +45,9 @@ function getURLMatchingEngine(engine, callback) {
             url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/master/src/sql/sqlops.d.ts',
             version: '*'
         });
-    } else {
-        return callback(null, {
-            url: `https://raw.githubusercontent.com/Microsoft/sqlopsstudio/${engine}/src/sql/sqlops.d.ts`,
-            version: '*'
-        });
     }
-    /*
-    shared.getContents('https://vscode-update.azurewebsites.net/api/releases/stable', null, { "X-API-Version": "2" }, function (error, tagsRaw) {
+
+    shared.getContents('https://azuredatastudio-update.azurewebsites.net/api/releases/stable', null, { "X-API-Version": "2" }, function (error, tagsRaw) {
         if (error) {
             exitWithError(error);
         }
@@ -95,7 +71,7 @@ function getURLMatchingEngine(engine, callback) {
 
         // check if master is on the version specified
         if (!tag) {
-            return shared.getContents('https://raw.githubusercontent.com/Microsoft/vscode/master/package.json', process.env.GITHUB_TOKEN, null, function (error, packageJson) {
+            return shared.getContents('https://raw.githubusercontent.com/Microsoft/azuredatastudio/master/package.json', process.env.GITHUB_TOKEN, null, function (error, packageJson) {
                 if (error) {
                     exitWithError(error);
                 }
@@ -104,23 +80,28 @@ function getURLMatchingEngine(engine, callback) {
                 if (semver.satisfies(version, engine)) {
                     // master
                     return callback(null, {
-                        url: 'https://raw.githubusercontent.com/Microsoft/vscode/master/src/vs/vscode.d.ts',
+                        url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/master/src/sql/sqlops.d.ts',
                         version: version
                     });
                 }
 
-                exitWithError('Could not find satifying VSCode for version ' + engine + ' in the tags: [' + tags.join(', ') + '] or on master: ' + version);
+                // try just grabbing it from a branch
+                return callback(null, {
+                    url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/' + engine + '/src/sql/sqlops.d.ts',
+                    version: '*'
+                });
+
+                // exitWithError('Could not find satifying Azure Data Studio for version ' + engine + ' in the tags: [' + tags.join(', ') + '] or on master: ' + version);
             });
         }
 
         console.log('Found minimal version that qualifies engine range: ' + tag);
 
         return callback(null, {
-            url: 'https://raw.githubusercontent.com/Microsoft/vscode/' + mapTagsToCommits[tag] + '/src/vs/vscode.d.ts',
+            url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/' + mapTagsToCommits[tag] + '/src/sql/sqlops.d.ts',
             version: tag
         });
     });
-    */
 }
 
 function minSatisfying(versions, range) {

@@ -1,14 +1,14 @@
 {
-  "name": "sqlops",
+  "name": "azdata",
   "version": "1.1.11",
-  "typings": "sqlops.d.ts",
+  "typings": "azdata.d.ts",
   "scripts": {
     "prepublish": "tsc -p ./",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./"
   },
   "bin": {
-    "sqlops-install": "./bin/install"
+    "azdata-install": "./bin/install"
   },
   "dependencies": {
     "glob": "^7.1.2",

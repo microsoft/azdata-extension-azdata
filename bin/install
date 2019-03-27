@@ -9,17 +9,17 @@ process.on('uncaughtException', function (err) {
     exitWithError(err);
 });
 
-var engine = process.env.npm_package_engines_sqlops;
+var engine = process.env.npm_package_engines_azdata;
 if (!engine) {
     exitWithError('Missing SQL Ops engine declaration in package.json.');
 }
 
-var sqlopsDtsTypescriptPath = path.join(path.dirname(__dirname), 'sqlops.d.ts');
+var azdataDtsTypescriptPath = path.join(path.dirname(__dirname), 'azdata.d.ts');
 
 console.log('Detected SQL Ops engine version: ' + engine);
 
 getURLMatchingEngine(engine, function (_, data) {
-    console.log('Fetching sqlops.d.ts from: ' + data.url);
+    console.log('Fetching azdata.d.ts from: ' + data.url);
 
     shared.getContents(data.url, process.env.GITHUB_TOKEN, null, function (error, contents) {
         if (error) {
@@ -27,14 +27,14 @@ getURLMatchingEngine(engine, function (_, data) {
         }
 
         if (contents === 'Not Found') {
-            exitWithError(new Error('Could not find sqlops.d.ts at the provided URL. Please report this to https://github.com/Microsoft/sqlops/issues'));
+            exitWithError(new Error('Could not find azdata.d.ts at the provided URL. Please report this to https://github.com/Microsoft/azuredatastudio/issues'));
         }
 
         // we don't need massaging in any version of our .d.ts
 
-        fs.writeFileSync(sqlopsDtsTypescriptPath, contents);
+        fs.writeFileSync(azdataDtsTypescriptPath, contents);
 
-        console.log('sqlops.d.ts successfully installed!\n');
+        console.log('azdata.d.ts successfully installed!\n');
     });
 });
 
@@ -42,7 +42,7 @@ function getURLMatchingEngine(engine, callback) {
     if (!engine || engine === '*') {
         // master
         return callback(null, {
-            url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/master/src/sql/sqlops.d.ts',
+            url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/master/src/sql/azdata.d.ts',
             version: '*'
         });
     }
@@ -80,14 +80,14 @@ function getURLMatchingEngine(engine, callback) {
                 if (semver.satisfies(version, engine)) {
                     // master
                     return callback(null, {
-                        url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/master/src/sql/sqlops.d.ts',
+                        url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/master/src/sql/azdata.d.ts',
                         version: version
                     });
                 }
 
                 // try just grabbing it from a branch
                 return callback(null, {
-                    url: 'https://raw.githubusercontent.com/Microsoft/sqlopsstudio/' + engine + '/src/sql/sqlops.d.ts',
+                    url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/' + engine + '/src/sql/azdata.d.ts',
                     version: '*'
                 });
 
@@ -98,7 +98,7 @@ function getURLMatchingEngine(engine, callback) {
         console.log('Found minimal version that qualifies engine range: ' + tag);
 
         return callback(null, {
-            url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/' + mapTagsToCommits[tag] + '/src/sql/sqlops.d.ts',
+            url: 'https://raw.githubusercontent.com/Microsoft/azuredatastudio/' + mapTagsToCommits[tag] + '/src/sql/azdata.d.ts',
             version: tag
         });
     });
@@ -117,6 +117,6 @@ function minSatisfying(versions, range) {
 }
 
 function exitWithError(error) {
-    console.error('Error installing sqlops.d.ts: ' + error.toString());
+    console.error('Error installing azdata.d.ts: ' + error.toString());
     process.exit(1);
 }

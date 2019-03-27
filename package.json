@@ -1,6 +1,6 @@
 {
   "name": "azdata",
-  "version": "1.1.11",
+  "version": "1.0.0",
   "typings": "azdata.d.ts",
   "scripts": {
     "prepare": "tsc -p ./",

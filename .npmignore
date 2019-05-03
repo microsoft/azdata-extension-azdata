@@ -1,6 +1,0 @@
-.vscode
-.npmignore
-lib/shared.ts
-lib/testrunner.ts
-tsconfig.json
-tslint.json
